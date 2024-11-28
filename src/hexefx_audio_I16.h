@@ -5,6 +5,6 @@
 #include "effect_springreverb_i16.h"
 #include "effect_reverbsc_i16.h"
 #include "effect_delaystereo_i16.h"
-
+#include "effect_phaserStereo_i16.h"
 
 #endif // _HEXEFX_AUDIO_H

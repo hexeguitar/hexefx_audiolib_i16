@@ -194,6 +194,11 @@ void AudioEffectDelayStereo_i16::update()
 		dly0b.updateIndex();
 		dly1a.updateIndex();
 		dly1b.updateIndex();
+		if (outL > 1.0f) 		outL = 1.0f;
+		else if (outL < -1.0f) 	outL = -1.0f;
+		if (outR > 1.0f)		outR = 1.0f;
+		else if (outR < -1.0f) 	outR = -1.0f;
+		
 		blockL->data[i] = (int16_t)((outL * wet_gain + inL * dry_gain) * 32767.0f);
 		blockR->data[i] = (int16_t)((outR * wet_gain + inR * dry_gain) * 32767.0f);
 

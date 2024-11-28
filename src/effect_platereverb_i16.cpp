@@ -226,7 +226,8 @@ void AudioEffectPlateReverb_i16::update()
 		acc = flt_masterL.process(acc);
 
 		sampleL = acc * wet_gain + sampleL * dry_gain; 
-
+		if (sampleL > 1.0f) 		sampleL = 1.0f;
+		else if (sampleL < -1.0f) 	sampleL = -1.0f;
 		blockL->data[i] = (int16_t)(sampleL * 32767.0f); 
         // ChannelR
 		acc  = lp_dly1.getTap(lp_dly1_offset_R) * 0.8f;
@@ -237,6 +238,8 @@ void AudioEffectPlateReverb_i16::update()
 		acc = flt_masterR.process(acc);
 
 		sampleR =  acc * wet_gain + sampleR * dry_gain;
+		if (sampleR > 1.0f)		sampleR = 1.0f;
+		else if (sampleR < -1.0f) 	sampleR = -1.0f;
 
 		blockR->data[i] = (int16_t)(sampleR * 32767.0f);
 
