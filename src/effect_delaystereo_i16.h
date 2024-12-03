@@ -48,7 +48,7 @@ public:
 	{
 		t = constrain(t, 0.0f, 1.0f);
 		t = t * t;
-		t = map(t, 0.0f, 1.0f, (float32_t)(dly_length-dly_time_min), 0.0f);
+		t = map_sat(t, 0.0f, 1.0f, (float32_t)(dly_length-dly_time_min), 0.0f);
 		__disable_irq();
 		if (force) dly_time = t;
 		dly_time_set = t;
@@ -77,8 +77,8 @@ public:
 		if (infinite) return;
 		float32_t fb, attn;
         n = constrain(n, 0.0f, 1.0f);
-	    fb = map(n, 0.0f, 1.0f, 0.0f, feedb_max) * hp_feedb_limit;
-        attn = map(n*n*n, 0.0f, 1.0f, 1.0f, 0.4f);
+	    fb = map_sat(n, 0.0f, 1.0f, 0.0f, feedb_max) * hp_feedb_limit;
+        attn = map_sat(n*n*n, 0.0f, 1.0f, 1.0f, 0.4f);
 		inputGain_tmp = attn;
         __disable_irq();
         feedb = fb;
@@ -95,7 +95,7 @@ public:
 	{
 		n = constrain(n, 0.0f, 1.0f);
 		n = 2.0f * n - (n*n);
-        n = map (n, 0.0f, 1.0f, 10.0f, 0.3f);
+        n = map_sat(n, 0.0f, 1.0f, 10.0f, 0.3f);
         __disable_irq();
         dly_time_step = n;
         __enable_irq();	
@@ -190,7 +190,7 @@ public:
 	void mod_rate(float32_t r)
 	{
 		r = constrain(r*r*r, 0.0f, 1.0f);
-		r = map(r, 0.0f, 1.0f, 0.0f, lfo_fmax);
+		r = map_sat(r, 0.0f, 1.0f, 0.0f, lfo_fmax);
 		__disable_irq();
 		lfo.setRate(r);
 		__enable_irq();	
@@ -203,7 +203,7 @@ public:
 	void mod_depth(float32_t d)
 	{
 		d = constrain(d, 0.0f, 1.0f);
-		d = map(d, 0.0f, 1.0f, 0.0f, lfo_ampl_max);
+		d = map_sat(d, 0.0f, 1.0f, 0.0f, lfo_ampl_max);
 		__disable_irq();
 		lfo.setDepth(d);
 		__enable_irq();	

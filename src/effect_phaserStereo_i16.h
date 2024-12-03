@@ -147,11 +147,22 @@ class AudioEffectPhaserStereo_i16 : public AudioStream
     /**
      * @brief Controls the feedback parameter
      * 
-     * @param fdb ffedback value in range 0.0f to 1.0f
+     * @param fdb ffedback value in range -1.0f to 1.0f
      */
     void feedback(float32_t fdb)
     {
-        feedb = constrain(fdb, -1.0f, 1.0f);
+		float t = constrain(fdb, -1.0f, 1.0f);
+		t = fabs(t);
+		t = 2*t - (t*t);
+
+		if (fdb < 0.0f)
+		{
+			t *= -1.0;			
+		}
+		t = t * feedb_max;
+		__disable_irq()
+        feedb = t;
+		__enable_irq();
     }
     /**
      * @brief Dry / Wet mixer ratio. Classic Phaser sound uses 0.5f for 50% dry and 50%Wet
@@ -161,7 +172,9 @@ class AudioEffectPhaserStereo_i16 : public AudioStream
      */
     void mix(float32_t ratio)
     {
+		__disable_irq()
         mix_ratio = constrain(ratio, 0.0f, 1.0f);
+		__enable_irq();
     }
     /**
      * @brief Sets the number of stages used in the phaser
@@ -173,7 +186,9 @@ class AudioEffectPhaserStereo_i16 : public AudioStream
     {
         if (st && st == ((st >> 1) << 1) && st <= PHASER_STEREO_STAGES) // only 2, 4, 6, 8, 12 allowed
         {
+			__disable_irq()
             stg = st;
+			__enable_irq();
         }
     }
     /**
@@ -183,6 +198,7 @@ class AudioEffectPhaserStereo_i16 : public AudioStream
      */
     void bypass_set(bool state) {bp = state;}
     bool bypass_tgl(void) {bp ^= 1; return bp;}
+	bool bypass_get() { return bp;}
 
 private:
     uint8_t stg;                                    // number of stages
@@ -192,6 +208,7 @@ private:
 	float32_t allpass_y[2][PHASER_STEREO_STAGES];      // allpass outputs
 	float32_t mix_ratio;                            // 0 = dry. 1.0 = wet
     float32_t feedb;                                // feedback 
+	static constexpr float32_t feedb_max = 0.95f;
     float32_t last_sampleL;
     float32_t last_sampleR;
     uint32_t lfo_phase_acc;                         // interfnal lfo 

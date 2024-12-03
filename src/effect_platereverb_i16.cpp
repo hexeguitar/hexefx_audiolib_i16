@@ -113,14 +113,13 @@ bool AudioEffectPlateReverb_i16::begin()
 
 	flags.bypass = 1;
     flags.freeze = 0;
-	initialised = true;
 	return true;
 }
 
 void AudioEffectPlateReverb_i16::update()
 {
 #if defined(__IMXRT1062__)	
-	if (!initialised) return;
+	if (!initialized) return;
     audio_block_t *blockL, *blockR;
 	float sampleL, sampleR;
 	int16_t i;

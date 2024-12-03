@@ -153,7 +153,7 @@ private:
 	float32_t i_pitch_mod_;
     float32_t sample_rate_;
     float32_t damp_fact_, damp_fact_tmp;
-    bool initialised = false;
+    bool initialized = false;
     ReverbScDl_t delay_lines_[8];
     float32_t *aux_; // main delay line storage buffer, placed either in RAM2 or PSRAM
 	const uint32_t aux_size_bytes = REVERBSC_I16_DLYBUF_SIZE*sizeof(float32_t);

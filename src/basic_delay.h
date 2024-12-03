@@ -15,7 +15,7 @@
 
 
 /**
- * @brief Basic delay line with buffer placed in PSRAM
+ * @brief Basic delay line with buffer placed in PSRAM or DMARAM
  * 
  * @tparam N delay length in samples (float)
  */
@@ -23,13 +23,11 @@
 class AudioBasicDelay
 {
 public:
-	~AudioBasicDelay()
-	{
-		if(bf) free(bf);
-	}
+	AudioBasicDelay() { bf = NULL; }
+	~AudioBasicDelay() { free(bf); }
 	bool init(uint32_t size_samples,  bool psram=false)
 	{
-		if(bf) free(bf);
+		free(bf);
 		use_psram = psram;
 		size = size_samples;
 		if (use_psram) 	bf = (float *)extmem_malloc(size * sizeof(float)); 	// allocate buffer in PSRAM

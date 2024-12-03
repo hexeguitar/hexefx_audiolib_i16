@@ -80,7 +80,14 @@ void AudioEffectPhaserStereo_i16::update()
  
  	if (!bypass_process(&blockL, &blockR, BYPASS_MODE_PASS, bp))
 		return;
- 
+	if (bp)
+	{
+		transmit(blockL, 0);
+		transmit(blockR, 1);
+		release(blockL);
+		release(blockR);
+		return;
+	}
     blockMod = receiveReadOnly(2);      // bipolar/int16_t control input
     if (!blockMod)  internalLFO = true;         // no modulation input provided -> use internal LFO
 
@@ -116,9 +123,6 @@ void AudioEffectPhaserStereo_i16::update()
         // apply scale/offset to the modulation wave
         modSigL = modSigL * _lfo_scaler + _lfo_bias;
         modSigR = modSigR * _lfo_scaler + _lfo_bias;
-
-
-
 
         drySigL = ((float32_t)blockL->data[i] / 32768.0f) * (1.0f - abs(fdb)*0.25f);  // attenuate the input if using feedback
         inSigL = drySigL + last_sampleL * fdb;
@@ -207,7 +211,7 @@ bool AudioEffectPhaserStereo_i16::bypass_process(audio_block_t** p_blockL, audio
 				*p_blockL = allocate();								// try to allocate a new block
 				if( !*p_blockL)
 				{
-					if (*p_blockR) release(*p_blockR);						// if the Rch is present, release/discard it
+					if (*p_blockR) release(*p_blockR);										// if the Rch is present, release/discard it
 					result = false;
 					break;																	// operation failed due to no audio memory left
 				}
@@ -218,7 +222,7 @@ bool AudioEffectPhaserStereo_i16::bypass_process(audio_block_t** p_blockL, audio
 				*p_blockR = allocate();
 				if( !*p_blockR) 															// no memory for a new block, but we might have L channel zeroed
 				{
-					if (*p_blockL) 	release(*p_blockL);					// blockL is available and contains audio. Discard it
+					if (*p_blockL) 	release(*p_blockL);										// blockL is available and contains audio. Discard it
 					result = false;
 					break;																	// and sigbnal failed operation
 				}

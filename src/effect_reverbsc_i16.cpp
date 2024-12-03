@@ -52,13 +52,13 @@ AudioEffectReverbSC_i16::AudioEffectReverbSC_i16(bool use_psram) : AudioStream(2
 		if (external_psram_size == 0) 
 		{
 			flags.mem_fail = 1;
-			initialised = true;
+			initialized = true;
 			return;
 		}
 		aux_ = (float32_t *) extmem_malloc(aux_size_bytes);
 		#else
 			flags.mem_fail = 1;
-			initialised = true;
+			initialized = true;
 			return;
 		#endif
 	}
@@ -82,7 +82,7 @@ AudioEffectReverbSC_i16::AudioEffectReverbSC_i16(bool use_psram) : AudioStream(2
 	}
 	mix(0.5f);
 
-	initialised = true;
+	initialized = true;
 }
 
 static int DelayLineMaxSamples(float32_t sr, float32_t i_pitch_mod, int n)
@@ -168,7 +168,7 @@ void AudioEffectReverbSC_i16::update()
 	int buffer_size; /* Local copy */
 	float32_t damp_fact = damp_fact_;
 	
-	if (!initialised) return;
+	if (!initialized) return;
 	// special case if memory allocation failed, pass the input signal directly to the output
 	if (flags.mem_fail) bp_mode = BYPASS_MODE_PASS;
 	

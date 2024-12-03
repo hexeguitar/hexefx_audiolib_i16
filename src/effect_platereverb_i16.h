@@ -43,7 +43,7 @@
 class AudioEffectPlateReverb_i16 :  public AudioStream
 {
 public:
-    AudioEffectPlateReverb_i16() : AudioStream(2, inputQueueArray) { begin();}
+    AudioEffectPlateReverb_i16() : AudioStream(2, inputQueueArray) { initialized = begin();}
 	~AudioEffectPlateReverb_i16(){};
     virtual void update();
 
@@ -395,7 +395,7 @@ public:
 		pitchRatio = s;
 		__enable_irq();
 	}
-	friend bool bypass_process(AudioStream* stream, audio_block_t** p_blockL, audio_block_t** p_blockR, bypass_mode_t mode, bool state);
+	bool isInitialized() { return initialized;}
 private:
     struct flags_t
     {
@@ -507,7 +507,7 @@ private:
     const float freeze_lodamp_k = 0.0f;
     const float freeze_hidamp_k = 1.0f;
 
-	bool initialised = false;
+	bool initialized = false;
 	uint16_t block_size = AUDIO_BLOCK_SAMPLES;
 
 	bool bypass_process(audio_block_t** p_blockL, audio_block_t** p_blockR, bypass_mode_t mode, bool state);

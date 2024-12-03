@@ -23,6 +23,8 @@ extern const float music_intevals[];		// semitone intervals -1oct to +2oct
 class AudioBasicPitch
 {
 public:
+	AudioBasicPitch() { bf = NULL; }
+	~AudioBasicPitch() { free(bf); }
 	bool init()
 	{
 		outFilter.init(hp_f, (float *)&hp_gain, lp_f, &lp_gain);
@@ -43,7 +45,6 @@ public:
 	}
 	void setTone(float t)
 	{
-		//lp_f = constrain(t, 0.01f, 1.0f);
 		lp_gain = constrain(t, 0.0f, 1.0f);
 	}
 
