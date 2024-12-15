@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 #include <arm_math.h>
+#include "utility/dspinst.h"
 
 #define F32_TO_I32_NORM_FACTOR 	(2147483647) // which is 2^31-1
 #define I32_TO_F32_NORM_FACTOR 	(4.656612875245797e-10)   //which is 1/(2^31 - 1)
@@ -25,6 +26,24 @@ static inline void mix_pwr(float32_t mix, float32_t *wetMix, float32_t *dryMix)
 
     *wetMix = C * C;
     *dryMix = D * D;
+}
+
+/**
+ * @brief Constant amplitude xfader curve based on equation y = x^2 * (3-2*x)
+ * 
+ * @param mix mix setting in range 0-32767
+ * @param wetMix pointer to the wet channel gain
+ * @param dryMix pointer to the dry channel gain
+ */
+static inline void mix_const_ampl_i16(int16_t mix, int16_t *wetMix, int16_t *dryMix);
+static inline void mix_const_ampl_i16(int16_t mix, int16_t *wetMix, int16_t *dryMix)
+{
+	if (mix < 0) mix = 0;
+	uint32_t tmp32 = 3*32767 - (mix<<1);
+	uint32_t gw = signed_saturate_rshift(multiply_16bx16b(mix, mix), 16, 15);
+	gw = signed_saturate_rshift(gw*tmp32, 16, 15);
+	*wetMix = gw;
+	*dryMix = 32767 - gw;
 }
 
 void scale_float_to_int32range(const float32_t *pSrc, float32_t *pDst, uint32_t blockSize);

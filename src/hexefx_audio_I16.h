@@ -7,4 +7,6 @@
 #include "effect_delaystereo_i16.h"
 #include "effect_phaserStereo_i16.h"
 
+#include "mixer_synth8ch_i16.h"
+
 #endif // _HEXEFX_AUDIO_H

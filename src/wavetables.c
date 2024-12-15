@@ -1,6 +1,7 @@
 /*
 	Various waveforms used in the hexefx_audiolib_F32
 */
+#include <Arduino.h>
 #include <arm_math.h>
 const uint16_t AudioWaveformHyperTri[257] = 
 {
@@ -72,7 +73,7 @@ const float32_t AudioWaveformFader_f32[257] =
 /************************************************************************/
 /* Pitch intervals in range from -1oct to +2 oct, step 1semitone        */
 /************************************************************************/
-const float music_intevals[37] =
+PROGMEM const float music_intevals[37] =
 {
 	 0.500000f,  0.529732f,  0.561231f,  0.594604f,  0.629961f,  0.667420f,  0.707107f,  0.749154f,
 	 0.793701f,  0.840896f,  0.890899f,  0.943874f,  1.000000f,  1.059463f,  1.122462f,  1.189207f,

@@ -12,6 +12,10 @@ The effecs are ported from the main [floating point version of the library](http
 ### [Stereo Modulated Ping-Pong Delay](DelayStereo.md "Stereo Modulated Ping-Pong Delay")  
 ### Stereo 12 stage Phaser  
 
+## Synth  
+
+### 8 channel voice mixer with stereo output and modulation inputs  
+
 ---  
 Copyright 11.2024 by Piotr Zapart  
 www.hexefx.com

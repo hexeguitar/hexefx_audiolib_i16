@@ -553,7 +553,9 @@ span.mainfunction {color: #993300; font-weight: bolder}
 		{"type":"AudioEffectPlateReverb_i16","data":{"defaults":{"name":{"value":"new"}},"shortName":"PlateReveverb","inputs":"2","output":"2","category":"hexefx","color":"#E6E0F8","icon":"arrow-in.png","outputs":"2"}},
 		{"type":"AudioEffectSpringReverb_i16","data":{"defaults":{"name":{"value":"new"}},"shortName":"SpringReverb","inputs":"2","output":"2","category":"hexefx","color":"#E6E0F8","icon":"arrow-in.png","outputs":"2"}},
 		{"type":"AudioEffectReverbSc_i16","data":{"defaults":{"name":{"value":"new"}},"shortName":"Reverb_SC","inputs":"2","output":"2","category":"hexefx","color":"#E6E0F8","icon":"arrow-in.png","outputs":"2"}},
-		{"type":"AudioEffectDelayStereo_i16","data":{"defaults":{"name":{"value":"new"}},"shortName":"PP_delay","inputs":"2","output":"2","category":"hexefx","color":"#E6E0F8","icon":"arrow-in.png","outputs":"2"}}
+		{"type":"AudioEffectDelayStereo_i16","data":{"defaults":{"name":{"value":"new"}},"shortName":"PP_delay","inputs":"2","output":"2","category":"hexefx","color":"#E6E0F8","icon":"arrow-in.png","outputs":"2"}},
+
+		{"type":"AudioMixerSynth8ch_i16","data":{"defaults":{"name":{"value":"new"}},"shortName":"mixer8","inputs":"10","output":"2","category":"hexefx","color":"#E6E0F8","icon":"arrow-in.png","outputs":"2"}}
 
 	
 		]}
@@ -6236,6 +6238,94 @@ value  frequency
 </script>
 
 <script type="text/x-red" data-template-name="AudioEffectDelayStereo_i16">
+	<div class="form-row">
+		<label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+		<input type="text" id="node-input-name" placeholder="Name">
+	</div>
+</script>
+
+<!-- ============   AudioMixerSynth8_i16    ========= -->
+<script type="text/x-red" data-help-name="AudioMixerSynth8ch_i16">
+	<h3>Summary</h3>
+	<div class=tooltipinfo>
+	<p>Combine up to 8 audio signals together, each with adjustable gain 
+		and panorama setting. Dedicated voice mixer block designed for polyphonic synths. </p>
+		<p>hexefx_audiolib_i16 extension.</p>
+	</div>
+	<h3>Audio Connections</h3>
+	<table class=doc align=center cellpadding=3>
+		<tr class=top><th>Port</th><th>Purpose</th></tr>
+		<tr class=odd><td align=center>In 0</td><td>Input signal #1</td></tr>
+		<tr class=odd><td align=center>In 1</td><td>Input signal #2</td></tr>
+		<tr class=odd><td align=center>In 2</td><td>Input signal #3</td></tr>
+		<tr class=odd><td align=center>In 3</td><td>Input signal #4</td></tr>
+		<tr class=odd><td align=center>In 4</td><td>Input signal #5</td></tr>
+		<tr class=odd><td align=center>In 5</td><td>Input signal #6</td></tr>
+		<tr class=odd><td align=center>In 6</td><td>Input signal #7</td></tr>
+		<tr class=odd><td align=center>In 7</td><td>Input signal #8</td></tr>
+		<tr class=odd><td align=center>In 8</td><td>Input volume modulation</td></tr>
+		<tr class=odd><td align=center>In 9</td><td>Input panorama modulation</td></tr>				
+		<tr class=odd><td align=center>Out 0</td><td>Sum of all inputs Left</td></tr>
+		<tr class=odd><td align=center>Out 1</td><td>Sum of all inputs Right</td></tr>
+	</table>
+	<h3>Functions</h3>
+	<h4>Volume controls</h4>
+	<p class=func><span class=keyword>gain</span>(<strong>uint8_t </strong>channel, <strong>float32_t </strong>gain, <strong>float32_t </strong>modMult);</p>
+	<p class=desc>Adjust the channel volume level and it's modulation multiplier.  "channel" must
+		be 0 to 7.  "gain" may be any floating point number from 0 to 1.0.
+		"modMult" controls the volume modulation input which is mixed with the static gain setting ans has range from -1.0 (inverted phase) to 1.0.
+	</p>
+
+	<p class=func><span class=keyword>gain</span>(<strong>uint8_t </strong>channel, <strong>float32_t </strong>gain);</p>
+	<p class=desc>Adjust the channel volume level leaving the modulation multiplier intact.  "channel" must
+		be 0 to 7.  "gain" may be any floating point number from 0 to 1.0.</p>
+
+	<p class=func><span class=keyword>gainAll</span>(<strong>float32_t </strong>gain);</p>
+	<p class=desc>Set the channel volume level for all inputs at once.  "gain" may be any floating point number from 0 to 1.0.</p>
+
+	<p class=func><span class=keyword>gainMod</span>(<strong>uint8_t </strong>channel, <strong>float32_t </strong>modMult);</p>
+	<p class=desc>Set the volume modulation multiplier for the chosen input channel. Works as "tremolo" depth control. The range is 
+		from -1.0 to 1.0.</p>
+
+	<p class=func><span class=keyword>gainModAll</span>(<strong>float32_t </strong>modMult);</p>
+	<p class=desc>Set the volume modulation multiplier for all the input channels. Works as "tremolo" depth control. The range is 
+		from -1.0 to 1.0.</p>
+	
+	<h4>Panorama controls</h4>
+	<p class=func><span class=keyword>pan</span>(<strong>uint8_t </strong>channel, <strong>float32_t </strong>p);</p>
+	<p class=desc>Adjust the panorama setting for the chosen channel (0-7). Panorama range is 0.0 (left), through 0.5 (center) to
+		1.0 (right).</p>
+
+	<p class=func><span class=keyword>panAll</span>(<strong>float32_t </strong>p);</p>
+	<p class=desc>Adjust the panorama setting for all the input channels. Panorama range is 0.0 (left), through 0.5 (center) to
+		1.0 (right).</p>	
+
+	<p class=func><span class=keyword>panMod</span>(<strong>uint8_t </strong>channel, <strong>float32_t </strong>modMult);</p>
+	<p class=desc>Set the panorama modulation multiplier for the chosen input channel. Works as "auto-pan" depth control. The range is 
+		from -1.0 to 1.0.</p>
+
+	<p class=func><span class=keyword>panModAll</span>(<strong>float32_t </strong>modMult);</p>
+	<p class=desc>Set the panorama modulation multiplier for all the input channels. Works as "tremolo" depth control. The range is 
+		from -1.0 to 1.0.</p>	
+
+	<h4>Modulation inputs</h4>
+
+	<p class=func><span class=keyword>modEnable</span>(<strong>uint8_t </strong>channel, <strong>uint8_t </strong>mask);</p>
+	<p class=desc>Allows to switch between 4 modulation modes for the chosen channel: <strong>VOICEMIXER_MOD_OFF</strong>, 
+		<strong>VOICEMIXER_MOD_VOL</strong>, <strong>VOICEMIXER_MOD_PAN</strong>, <strong>VOICEMIXER_MOD_VOL_PAN</strong>. 
+	This setting overrides the corresponding multiplier values and should be used as a quick method to turn the modulation on/off 
+without affecting any parameter values.</p>	
+
+<p class=func><span class=keyword>modEnableAll</span>(<strong>uint8_t </strong>mask);</p>
+<p class=desc>Does the same as the function above, but globally for all channels at once.</p>	
+
+<h3>Example</h3>
+<img src="img/voicemixer_example.png" alt="Voicemixer example of use"/>
+<h4>Gain/Pan mixing emulation</h4>
+<a href="https://hexeguitar.github.io/p5js_projects/TeensySynth.html" target="__blank">CLICK HERE</a>
+
+</script>
+<script type="text/x-red" data-template-name="AudioMixerSynth8ch_i16">
 	<div class="form-row">
 		<label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
 		<input type="text" id="node-input-name" placeholder="Name">
