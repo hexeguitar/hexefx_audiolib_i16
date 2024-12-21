@@ -15,8 +15,9 @@ The effecs are ported from the main [floating point version of the library](http
 ## Synth  
 
 ### 8 channel voice mixer with stereo output and modulation inputs  
+### AudioWaveform generator extensions (sequenced PWM mode)    
 
 ---  
-Copyright 11.2024 by Piotr Zapart  
+Copyright 12.2024 by Piotr Zapart  
 www.hexefx.com
 

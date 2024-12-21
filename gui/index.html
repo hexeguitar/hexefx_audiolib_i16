@@ -555,8 +555,9 @@ span.mainfunction {color: #993300; font-weight: bolder}
 		{"type":"AudioEffectReverbSc_i16","data":{"defaults":{"name":{"value":"new"}},"shortName":"Reverb_SC","inputs":"2","output":"2","category":"hexefx","color":"#E6E0F8","icon":"arrow-in.png","outputs":"2"}},
 		{"type":"AudioEffectDelayStereo_i16","data":{"defaults":{"name":{"value":"new"}},"shortName":"PP_delay","inputs":"2","output":"2","category":"hexefx","color":"#E6E0F8","icon":"arrow-in.png","outputs":"2"}},
 
-		{"type":"AudioMixerSynth8ch_i16","data":{"defaults":{"name":{"value":"new"}},"shortName":"mixer8","inputs":"10","output":"2","category":"hexefx","color":"#E6E0F8","icon":"arrow-in.png","outputs":"2"}}
-
+		{"type":"AudioMixerSynth8ch_i16","data":{"defaults":{"name":{"value":"new"}},"shortName":"mixer8","inputs":"10","output":"2","category":"hexefx","color":"#E6E0F8","icon":"arrow-in.png","outputs":"2"}},
+		{"type":"AudioSynthWaveform_ext_i16","data":{"defaults":{"name":{"value":"new"}},"shortName":"waveform_ext","inputs":0,"outputs":1,"category":"hexefx","color":"#E6E0F8","icon":"arrow-in.png"}},
+		{"type":"AudioSynthWaveformModulated_ext_i16","data":{"defaults":{"name":{"value":"new"}},"shortName":"waveformMod_ext","inputs":2,"outputs":1,"category":"hexefx","color":"#E6E0F8","icon":"arrow-in.png"}}
 	
 		]}
 </script>
@@ -6332,6 +6333,73 @@ without affecting any parameter values.</p>
 	</div>
 </script>
 
+<!-- ============   AudioSynthWaveform_ext_i16    ========= -->
+<script type="text/x-red" data-help-name="AudioSynthWaveform_ext_i16">
+	<h3>Summary</h3>
+	<div class=tooltipinfo>
+	<p>Sequence 4 PWM duty cycles in a row for different harmonic textures, extended AudioSynthWaveform component. . </p>
+		<p>hexefx_audiolib_i16 extension.</p>
+	</div>
+	<p>This component extends the original AudioSynthWaveform with a new waveform option: <strong>WAVEFORM_BANDLIMIT_PULSE_SEQ</strong>.</p>
+	<p>It is a sequenced PWM mode, where each sequence or frame is made of 4 steps with different PWM duty setting. 
+		In addition, each step can be shifted 1 octave up or down.</p>
+	<img src="img/pulseseq_wave.png"/>
+	<h3>Audio Connections</h3>
+	<table class=doc align=center cellpadding=3>
+		<tr class=top><th>Port</th><th>Purpose</th></tr>
+		<tr class=odd><td align=center>Out 0</td><td>Waveform Output</td></tr>
+	</table>
+	<h3>Functions</h3>
+	<p>See <strong>AudioSynthWaveform</strong> component for all the default functions.</p>
+	<h4>Extensions</h4>
+	<p class=func><span class=keyword>pulseWidthSeq</span>(<strong>float </strong>step0, <strong>int8_t </strong>oct0,
+		<strong>float </strong>step1, <strong>int8_t </strong>oct1,	<strong>float </strong>step2, <strong>int8_t </strong>oct2, 
+		<strong>float </strong>step3, <strong>int8_t </strong>oct3,);</p>
+	<p class=desc>Set the PWM duty and the octave for the steps0-3 in range 0.0 to 1.0. Octave setting: -1 = octave down, 
+		0 = natural pitch, 1 = octave up.</p>
+
+</script>
+<script type="text/x-red" data-template-name="AudioSynthWaveform_ext_i16">
+	<div class="form-row">
+		<label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+		<input type="text" id="node-input-name" placeholder="Name">
+	</div>
+</script>
+
+<!-- ============   AudioSynthWaveformModulated_ext_i16    ========= -->
+<script type="text/x-red" data-help-name="AudioSynthWaveformModulated_ext_i16">
+	<h3>Summary</h3>
+	<div class=tooltipinfo>
+	<p>Sequence 4 PWM duty cycles in a row for different harmonic textures, extended AudioSynthWaveform component. . </p>
+		<p>hexefx_audiolib_i16 extension.</p>
+	</div>
+	<p>This component extends the original AudioSynthWaveformModulated with a new waveform option: <strong>WAVEFORM_BANDLIMIT_PULSE_SEQ</strong>.</p>
+	<p>It is a sequenced PWM mode, where each sequence or frame is made of 4 steps with different PWM duty setting. 
+		In addition, each step can be shifted 1 octave up or down.</p>
+	<img src="img/pulseseq_wave.png"/>
+	<h3>Audio Connections</h3>
+	<table class=doc align=center cellpadding=3>
+		<tr class=top><th>Port</th><th>Purpose</th></tr>
+		<tr class=odd><td align=center>In 0</td><td>Frequency or Phase</td></tr>
+		<tr class=odd><td align=center>In 1</td><td>Shape (Pulse &amp; Var Triangle)</td></tr>
+		<tr class=odd><td align=center>Out 0</td><td>Waveform Output</td></tr>
+	</table>
+	<h3>Functions</h3>
+	<p>See <strong>AudioSynthWaveform</strong> component for all the default functions.</p>
+	<h4>Extensions</h4>
+	<p class=func><span class=keyword>pulseWidthSeq</span>(<strong>float </strong>step0, <strong>int8_t </strong>oct0,
+		<strong>float </strong>step1, <strong>int8_t </strong>oct1,	<strong>float </strong>step2, <strong>int8_t </strong>oct2, 
+		<strong>float </strong>step3, <strong>int8_t </strong>oct3,);</p>
+	<p class=desc>Set the PWM duty and the octave for the steps0-3 in range 0.0 to 1.0. Octave setting: -1 = octave down, 
+		0 = natural pitch, 1 = octave up.</p>
+
+</script>
+<script type="text/x-red" data-template-name="AudioSynthWaveformModulated_ext_i16">
+	<div class="form-row">
+		<label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+		<input type="text" id="node-input-name" placeholder="Name">
+	</div>
+</script>
 
 </body>
 </html>
