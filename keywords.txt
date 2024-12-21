@@ -62,7 +62,6 @@ feedback	KEYWORD2
 bypass_setMode	KEYWORD2
 bypass_geMode	KEYWORD2
 
-
 AudioEffectDelayStereoi16	KEYWORD1
 delay	KEYWORD2
 feedback	KEYWORD2
@@ -72,5 +71,24 @@ mod_rate	KEYWORD2
 mod_depth	KEYWORD2
 tap_tempo	KEYWORD2
 
+AudioMixerSynth8ch_i16	KEYWORD1
+gainAll	KEYWORD2
+gainModAll	KEYWORD2
+gainMod	KEYWORD2
+pan	KEYWORD2
+panAll	KEYWORD2
+panMod	KEYWORD2
+panModAll	KEYWORD2
+modEnable	KEYWORD2
+modEnableAll	KEYWORD2
+getGain	KEYWORD2
+getPan	KEYWORD2
+mixGain	KEYWORD2
+mixPan	KEYWORD2
+calc_gain	KEYWORD2
+
+AudioSynthWaveform_ext_i16	KEYWORD1
+AudioSynthWaveformModulated_ext_i16	KEYWORD1
+pulseWidthSeq	KEYWORD2
 
 
