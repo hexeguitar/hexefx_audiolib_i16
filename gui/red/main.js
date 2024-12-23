@@ -60,7 +60,7 @@ var RED = (function() {
 			nns.sort(function(a,b){ return (a.x + a.y/250) - (b.x + b.y/250); });
 			//console.log(JSON.stringify(nns));
 
-			var cpp = "#include <Audio.h>\n#include <hexefx_audiolib_I16.h>\n#include <Wire.h>\n"
+			var cpp = "#include <Audio.h>\n#include <hexefx_audiolib_i16.h>\n#include <Wire.h>\n"
 				+ "#include <SPI.h>\n#include <SD.h>\n#include <SerialFlash.h>\n\n"
 				+ "// GUItool: begin automatically generated code\n";
 			// generate code for all audio processing nodes
