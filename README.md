@@ -15,7 +15,11 @@ The effecs are ported from the main [floating point version of the library](http
 ## Synth  
 
 ### 8 channel voice mixer with stereo output and modulation inputs  
+Useful module for building polyphonic 8 voice synthesizers, mix all the voices at once instead of using cascaded 4 channel mixers. In addition, it provides two more modulation inputs: one for volume (tremolo effects) and one for panorama (auto-pan effect).  
+![8 channel voice mixer](gui/img/voicemixer_example.png)
 ### AudioWaveform generator extensions (sequenced PWM mode)    
+enabling a waveform generator with option to sequence up to 16 step with different PWM duty and octave setting.  
+![Sequenced PWM mode](gui/img/pulseseq_wave.png)
 
 ## Using with Arduino  
 
@@ -26,7 +30,7 @@ The effecs are ported from the main [floating point version of the library](http
    `git clone https://github.com/hexeguitar/hexefx_audiolib_i16.git`
    or alternatively, download the ZIP file and unpack the library there.
 5. Restart the Arduino IDE. 
-6. To use the audio library extensions within graphical design tool visit [this link](https://hexeguitar.github.io/hexefx_audiolib_i16/gui/index.html "Graphical Design Tool"). This version includes the default Teensy Audio library and the hexefx_audiolib_i16 extensions.  
+6. To use the audio library extensions within graphical design tool visit **[this link](https://hexeguitar.github.io/hexefx_audiolib_i16/gui/index.html "Graphical Design Tool")**. This version includes the default Teensy Audio library and the hexefx_audiolib_i16 extensions.  
 7. If defining the components manually, make sure `Audio.h`and `hexefx_audiolib_i16.h` are included in the sketch file.   
 ---  
 Copyright 12.2024 by Piotr Zapart  
