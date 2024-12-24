@@ -32,7 +32,18 @@
 #include <arm_math.h>    // github.com/PaulStoffregen/cores/blob/master/teensy4/arm_math.h
 #include "synth_waveform.h" // extends the existing AudioSynthWaveform
 
+
 #define WAVEFORM_BANDLIMIT_PULSE_SEQ	16
+// P.Z. 2024: i have tried longer PWM step chans, but <4 steps seem to deliver the most optimal sound pallete 
+#define WAVEFORM_PULSE_SEQ_LEN_MAX		4
+
+typedef struct 
+{
+	uint8_t length = WAVEFORM_PULSE_SEQ_LEN_MAX;
+	float steps[WAVEFORM_PULSE_SEQ_LEN_MAX];
+	int8_t oct[WAVEFORM_PULSE_SEQ_LEN_MAX];
+}waveform_pulse_seq_data_t;
+
 
 class AudioSynthWaveform_ext_i16 : public AudioStream
 {
@@ -42,6 +53,18 @@ public:
 		magnitude(0), pulse_width(0x40000000),
 		arbdata(NULL), sample(0), tone_type(WAVEFORM_SINE),
 		tone_offset(0) {
+			// initialize the pulse sequence table
+			// Default setting is classic POKEY Atari bass sound
+			pulse_seq_table[0] = 0.75f * 4294967296.0f;
+			pulse_seq_table[1] = 0.5f * 4294967296.0f;
+			pulse_seq_table[2] = 0.5f * 4294967296.0f; 
+			pulse_seq_table[3] = 0.5f * 4294967296.0f; 
+			pulse_seq_oct[0] = 0;
+			pulse_seq_oct[1] = 0;
+			pulse_seq_oct[2] = 1;
+			pulse_seq_oct[3] = 1;
+			pulse_seq_idx = 0;
+			pulse_seq_len = WAVEFORM_PULSE_SEQ_LEN_MAX;
 	}
 
 	void frequency(float freq) {
@@ -97,19 +120,81 @@ public:
 		  band_limit_waveform.init_sawtooth (phase_increment) ;
 		else if (t_type == WAVEFORM_BANDLIMIT_PULSE_SEQ)
 		{
-			// Default setting is classic POKEY Atari bass sound
-			pulse_seq_table[0] = 0.75f * 4294967296.0f;
-			pulse_seq_table[1] = 0.5f * 4294967296.0f;
-			pulse_seq_table[2] = 0.5f * 4294967296.0f; 
-			pulse_seq_table[3] = 0.5f * 4294967296.0f; 
-			pulse_seq_oct[0] = 0;
-			pulse_seq_oct[1] = 0;
-			pulse_seq_oct[2] = 1;
-			pulse_seq_oct[3] = 1;
-			pulse_seq_idx = 0;
-			band_limit_waveform.init_pulse (phase_increment, pulse_seq_table[0]) ;
+			band_limit_waveform.init_pulse (phase_increment, pulse_seq_table[0]);
 		}		  
 	}
+	/**
+	 * @brief Set the parameters for one PWM step
+	 * 
+	 * @param step step number, must be less than pulse_seq_len
+	 * @param pwm pwm duty setting in range 0.0 to 1.0
+	 * @param oct octave setting in range -2 to 2
+	 */
+	void pulseWidthSeq_step(uint8_t step, float pwm, int8_t oct)
+	{
+		if (step >= pulse_seq_len) return;
+		pulse_seq_table[step] = constrain(pwm, 0.0f, 1.0f) * 4294967296.0f;
+		pulse_seq_oct[step] = constrain(oct, -2, 2);
+	}
+	/**
+	 * @brief Set the PWM duty for one step 
+	 * 
+	 * @param step step number
+	 * @param pwm pwm duty in range 0.0 - 1.0 
+	 */
+	void pulseWidthSeq_step(uint8_t step, float pwm)
+	{
+		if (step >= pulse_seq_len) return;
+		pulse_seq_table[step] = constrain(pwm, 0.0f, 1.0f) * 4294967296.0f;
+	}
+	/**
+	 * @brief Set the octave of one step
+	 * 
+	 * @param step step number
+	 * @param oct octave setting (-2...2)
+	 */
+	void pulseWidthSeq_oct(uint8_t step, int8_t oct)
+	{
+		if (step >= pulse_seq_len) return;
+		pulse_seq_oct[step] = constrain(oct, -2, 2);
+	}
+
+	/**
+	 * @brief set the length of the PWM sequence, max is 4
+	 * 
+	 * @param len pulse sequence length in steps
+	 */
+	void pulseWidthSeq_len(uint8_t len)
+	{
+		pulse_seq_len = constrain(len, 0, WAVEFORM_PULSE_SEQ_LEN_MAX);
+	}
+	/**
+	 * @brief set the PWM duty steps and octaves using an external data structure
+	 * 	might be useful for sound presets and import/export
+	 * 
+	 * @param data pointer to the wavefrom step data
+	 */
+	void pulseWidthSeq(waveform_pulse_seq_data_t* data)
+	{
+		uint8_t len = constrain(data->length, 0, WAVEFORM_PULSE_SEQ_LEN_MAX);
+		for (int i=0; i<len; i++)
+		{
+			pulse_seq_table[i] = data->steps[i];
+			pulse_seq_oct[i] = data->oct[i];
+		}
+	}
+	/**
+	 * @brief Set all PWM steps at once
+	 * 
+	 * @param step0 PWM duty for step 0
+	 * @param oct0  octave setting for step 0
+	 * @param step1 PWM duty for step 1
+	 * @param oct1 octave setting for step 1
+	 * @param step2 PWM duty for step 2
+	 * @param oct2 octave setting for step 2
+	 * @param step3 PWM duty for step 3
+	 * @param oct3 octave setting for step 3
+	 */
 	void pulseWidthSeq(	float step0, int8_t oct0,
 						float step1, int8_t oct1,
 						float step2, int8_t oct2,
@@ -119,10 +204,10 @@ public:
 		pulse_seq_table[1] = constrain(step1, 0.0f, 1.0f) * 4294967296.0f;
 		pulse_seq_table[2] = constrain(step2, 0.0f, 1.0f) * 4294967296.0f;
 		pulse_seq_table[3] = constrain(step3, 0.0f, 1.0f) * 4294967296.0f;
-		pulse_seq_oct[0] = constrain(oct0, -1, 1);
-		pulse_seq_oct[1] = constrain(oct1, -1, 1);
-		pulse_seq_oct[2] = constrain(oct2, -1, 1);
-		pulse_seq_oct[3] = constrain(oct3, -1, 1);
+		pulse_seq_oct[0] = constrain(oct0, -2, 2);
+		pulse_seq_oct[1] = constrain(oct1, -2, 2);
+		pulse_seq_oct[2] = constrain(oct2, -2, 2);
+		pulse_seq_oct[3] = constrain(oct3, -2, 2);
 	}
 
 
@@ -147,10 +232,12 @@ private:
 	int16_t  sample; // for WAVEFORM_SAMPLE_HOLD
 	short    tone_type;
 	int16_t  tone_offset;
-        BandLimitedWaveform band_limit_waveform ;
-	uint32_t pulse_seq_table[4];
-	int8_t pulse_seq_oct[4];
+    BandLimitedWaveform band_limit_waveform ;
+	// pulse sequenced mode
+	uint32_t pulse_seq_table[WAVEFORM_PULSE_SEQ_LEN_MAX];
+	int8_t pulse_seq_oct[WAVEFORM_PULSE_SEQ_LEN_MAX];
 	uint8_t pulse_seq_idx;
+	uint8_t pulse_seq_len;
 };
 
 
@@ -161,6 +248,18 @@ public:
 		phase_accumulator(0), phase_increment(0), modulation_factor(32768),
 		magnitude(0), arbdata(NULL), sample(0), tone_offset(0),
 		tone_type(WAVEFORM_SINE), modulation_type(0) {
+		// initialize the pulse sequence table
+		// Default setting is classic POKEY Atari bass sound
+		pulse_seq_table[0] = 0.75f * 4294967296.0f;
+		pulse_seq_table[1] = 0.5f * 4294967296.0f;
+		pulse_seq_table[2] = 0.5f * 4294967296.0f; 
+		pulse_seq_table[3] = 0.5f * 4294967296.0f; 
+		pulse_seq_oct[0] = 0;
+		pulse_seq_oct[1] = 0;
+		pulse_seq_oct[2] = 1;
+		pulse_seq_oct[3] = 1;
+		pulse_seq_idx = 0;
+		pulse_seq_len = WAVEFORM_PULSE_SEQ_LEN_MAX;			
 	}
 
 	void frequency(float freq) {
@@ -198,16 +297,6 @@ public:
 		  band_limit_waveform.init_sawtooth (phase_increment) ;
 		else if (t_type == WAVEFORM_BANDLIMIT_PULSE_SEQ)
 		{
-			// Default setting is classic POKEY Atari bass sound
-			pulse_seq_table[0] = 0.75f * 4294967296.0f;
-			pulse_seq_table[1] = 0.5f * 4294967296.0f;
-			pulse_seq_table[2] = 0.5f * 4294967296.0f; 
-			pulse_seq_table[3] = 0.5f * 4294967296.0f; 
-			pulse_seq_oct[0] = 0;
-			pulse_seq_oct[1] = 0;
-			pulse_seq_oct[2] = 1;
-			pulse_seq_oct[3] = 1;
-			pulse_seq_idx = 0;
 			band_limit_waveform.init_pulse (phase_increment, pulse_seq_table[0]) ;
 		}		  
 	}
@@ -237,6 +326,78 @@ public:
 		modulation_factor = degrees * (float)(65536.0 / 180.0);
 		modulation_type = 1;
 	}
+	/**
+	 * @brief Set the parameters for one PWM step
+	 * 
+	 * @param step step number, must be less than pulse_seq_len
+	 * @param pwm pwm duty setting in range 0.0 to 1.0
+	 * @param oct octave setting in range -2 to 2
+	 */
+	void pulseWidthSeq_step(uint8_t step, float pwm, int8_t oct)
+	{
+		if (step >= pulse_seq_len) return;
+		pulse_seq_table[step] = constrain(pwm, 0.0f, 1.0f) * 4294967296.0f;
+		pulse_seq_oct[step] = constrain(oct, -2, 2);
+	}
+	/**
+	 * @brief Set the PWM duty for one step 
+	 * 
+	 * @param step step number
+	 * @param pwm pwm duty in range 0.0 - 1.0 
+	 */
+	void pulseWidthSeq_step(uint8_t step, float pwm)
+	{
+		if (step >= pulse_seq_len) return;
+		pulse_seq_table[step] = constrain(pwm, 0.0f, 1.0f) * 4294967296.0f;
+	}
+	/**
+	 * @brief Set the octave of one step
+	 * 
+	 * @param step step number
+	 * @param oct octave setting (-2...2)
+	 */
+	void pulseWidthSeq_oct(uint8_t step, int8_t oct)
+	{
+		if (step >= pulse_seq_len) return;
+		pulse_seq_oct[step] = constrain(oct, -2, 2);
+	}
+
+	/**
+	 * @brief set the length of the PWM sequence, max is 4
+	 * 
+	 * @param len pulse sequence length in steps
+	 */
+	void pulseWidthSeq_len(uint8_t len)
+	{
+		pulse_seq_len = constrain(len, 0, WAVEFORM_PULSE_SEQ_LEN_MAX);
+	}
+	/**
+	 * @brief set the PWM duty steps and octaves using an external data structure
+	 * 	might be useful for sound presets and import/export
+	 * 
+	 * @param data pointer to the wavefrom step data
+	 */
+	void pulseWidthSeq(waveform_pulse_seq_data_t* data)
+	{
+		uint8_t len = constrain(data->length, 0, WAVEFORM_PULSE_SEQ_LEN_MAX);
+		for (int i=0; i<len; i++)
+		{
+			pulse_seq_table[i] = data->steps[i];
+			pulse_seq_oct[i] = data->oct[i];
+		}
+	}
+	/**
+	 * @brief Set all PWM steps at once
+	 * 
+	 * @param step0 PWM duty for step 0
+	 * @param oct0  octave setting for step 0
+	 * @param step1 PWM duty for step 1
+	 * @param oct1 octave setting for step 1
+	 * @param step2 PWM duty for step 2
+	 * @param oct2 octave setting for step 2
+	 * @param step3 PWM duty for step 3
+	 * @param oct3 octave setting for step 3
+	 */
 	void pulseWidthSeq(	float step0, int8_t oct0,
 						float step1, int8_t oct1,
 						float step2, int8_t oct2,
@@ -246,10 +407,10 @@ public:
 		pulse_seq_table[1] = constrain(step1, 0.0f, 1.0f) * 4294967296.0f;
 		pulse_seq_table[2] = constrain(step2, 0.0f, 1.0f) * 4294967296.0f;
 		pulse_seq_table[3] = constrain(step3, 0.0f, 1.0f) * 4294967296.0f;
-		pulse_seq_oct[0] = constrain(oct0, -1, 1);
-		pulse_seq_oct[1] = constrain(oct1, -1, 1);
-		pulse_seq_oct[2] = constrain(oct2, -1, 1);
-		pulse_seq_oct[3] = constrain(oct3, -1, 1);
+		pulse_seq_oct[0] = constrain(oct0, -2, 2);
+		pulse_seq_oct[1] = constrain(oct1, -2, 2);
+		pulse_seq_oct[2] = constrain(oct2, -2, 2);
+		pulse_seq_oct[3] = constrain(oct3, -2, 2);
 	}
 
 	virtual void update(void);
@@ -267,9 +428,11 @@ private:
 	uint8_t  tone_type;
 	uint8_t  modulation_type;
         BandLimitedWaveform band_limit_waveform ;
-	uint32_t pulse_seq_table[4];
-	int8_t pulse_seq_oct[4];
+	// pulse sequenced mode
+	uint32_t pulse_seq_table[WAVEFORM_PULSE_SEQ_LEN_MAX];
+	int8_t pulse_seq_oct[WAVEFORM_PULSE_SEQ_LEN_MAX];
 	uint8_t pulse_seq_idx;
+	uint8_t pulse_seq_len;
 };
 
 

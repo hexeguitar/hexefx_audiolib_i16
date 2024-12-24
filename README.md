@@ -18,7 +18,7 @@ The effecs are ported from the main [floating point version of the library](http
 Useful module for building polyphonic 8 voice synthesizers, mix all the voices at once instead of using cascaded 4 channel mixers. In addition, it provides two more modulation inputs: one for volume (tremolo effects) and one for panorama (auto-pan effect).  
 ![8 channel voice mixer](gui/img/voicemixer_example.png)
 ### AudioWaveform generator extensions (sequenced PWM mode)    
-enabling a waveform generator with option to sequence up to 16 step with different PWM duty and octave setting.  
+enabling a waveform generator with option to sequence up to 4 steps with different PWM duty and octave setting.  
 ![Sequenced PWM mode](gui/img/pulseseq_wave.png)
 
 ## Using with Arduino  

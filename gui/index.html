@@ -6342,7 +6342,7 @@ without affecting any parameter values.</p>
 	</div>
 	<p>This component extends the original AudioSynthWaveform with a new waveform option: <strong>WAVEFORM_BANDLIMIT_PULSE_SEQ</strong>.</p>
 	<p>It is a sequenced PWM mode, where each sequence or frame is made of 4 steps with different PWM duty setting. 
-		In addition, each step can be shifted 1 octave up or down.</p>
+		In addition, each step can be shifted 2 octaves up or down.</p>
 	<img src="img/pulseseq_wave.png"/>
 	<h3>Audio Connections</h3>
 	<table class=doc align=center cellpadding=3>
@@ -6354,9 +6354,23 @@ without affecting any parameter values.</p>
 	<h4>Extensions</h4>
 	<p class=func><span class=keyword>pulseWidthSeq</span>(<strong>float </strong>step0, <strong>int8_t </strong>oct0,
 		<strong>float </strong>step1, <strong>int8_t </strong>oct1,	<strong>float </strong>step2, <strong>int8_t </strong>oct2, 
-		<strong>float </strong>step3, <strong>int8_t </strong>oct3,);</p>
-	<p class=desc>Set the PWM duty and the octave for the steps0-3 in range 0.0 to 1.0. Octave setting: -1 = octave down, 
-		0 = natural pitch, 1 = octave up.</p>
+		<strong>float </strong>step3, <strong>int8_t </strong>oct3);</p>
+	<p class=desc>Set the PWM duty and the octave for the steps0-3 in range 0.0 to 1.0. Octave range: -2 to 2.</p>
+
+	<p class=func><span class=keyword>pulseWidthSeq</span>(<strong>waveform_pulse_seq_data_t* </strong>data);</p>
+	<p class=desc>Configure the PWM sequence using an external data provided as a structure.</p>
+
+	<p class=func><span class=keyword>pulseWidthSeq_step</span>(<strong>uint8_t </strong>step, <strong>float </strong>pwm, 
+		<strong>int8_t </strong>oct);</p>
+	<p class=desc>Set the PWM duty and the octave for one step.</p>
+	<p class=func><span class=keyword>pulseWidthSeq_step</span>(<strong>uint8_t </strong>step, <strong>float </strong>pwm);</p>
+	<p class=desc>Set the PWM duty for one step.</p>		
+	<p class=func><span class=keyword>pulseWidthSeq_oct</span>(<strong>uint8_t </strong>step, <strong>int8_t </strong>oct);</p>
+	<p class=desc>Set the octave value for one step.</p>
+
+	<p class=func><span class=keyword>pulseWidthSeq_len</span>(<strong>uint8_t </strong>len);</p>
+	<p class=desc>Set the step count used in the sequence.</p>
+
 
 </script>
 <script type="text/x-red" data-template-name="AudioSynthWaveform_ext_i16">
@@ -6375,7 +6389,7 @@ without affecting any parameter values.</p>
 	</div>
 	<p>This component extends the original AudioSynthWaveformModulated with a new waveform option: <strong>WAVEFORM_BANDLIMIT_PULSE_SEQ</strong>.</p>
 	<p>It is a sequenced PWM mode, where each sequence or frame is made of 4 steps with different PWM duty setting. 
-		In addition, each step can be shifted 1 octave up or down.</p>
+		In addition, each step can be shifted 2 octaves up or down.</p>
 	<img src="img/pulseseq_wave.png"/>
 	<h3>Audio Connections</h3>
 	<table class=doc align=center cellpadding=3>
@@ -6389,9 +6403,22 @@ without affecting any parameter values.</p>
 	<h4>Extensions</h4>
 	<p class=func><span class=keyword>pulseWidthSeq</span>(<strong>float </strong>step0, <strong>int8_t </strong>oct0,
 		<strong>float </strong>step1, <strong>int8_t </strong>oct1,	<strong>float </strong>step2, <strong>int8_t </strong>oct2, 
-		<strong>float </strong>step3, <strong>int8_t </strong>oct3,);</p>
-	<p class=desc>Set the PWM duty and the octave for the steps0-3 in range 0.0 to 1.0. Octave setting: -1 = octave down, 
-		0 = natural pitch, 1 = octave up.</p>
+		<strong>float </strong>step3, <strong>int8_t </strong>oct3);</p>
+	<p class=desc>Set the PWM duty and the octave for the steps0-3 in range 0.0 to 1.0. Octave range: -2 to 2.</p>
+
+	<p class=func><span class=keyword>pulseWidthSeq</span>(<strong>waveform_pulse_seq_data_t* </strong>data);</p>
+	<p class=desc>Configure the PWM sequence using an external data provided as a structure.</p>
+
+	<p class=func><span class=keyword>pulseWidthSeq_step</span>(<strong>uint8_t </strong>step, <strong>float </strong>pwm, 
+		<strong>int8_t </strong>oct);</p>
+	<p class=desc>Set the PWM duty and the octave for one step.</p>
+	<p class=func><span class=keyword>pulseWidthSeq_step</span>(<strong>uint8_t </strong>step, <strong>float </strong>pwm);</p>
+	<p class=desc>Set the PWM duty for one step.</p>		
+	<p class=func><span class=keyword>pulseWidthSeq_oct</span>(<strong>uint8_t </strong>step, <strong>int8_t </strong>oct);</p>
+	<p class=desc>Set the octave value for one step.</p>
+
+	<p class=func><span class=keyword>pulseWidthSeq_len</span>(<strong>uint8_t </strong>len);</p>
+	<p class=desc>Set the step count used in the sequence.</p>
 
 </script>
 <script type="text/x-red" data-template-name="AudioSynthWaveformModulated_ext_i16">
